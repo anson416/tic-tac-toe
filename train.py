@@ -78,7 +78,7 @@ def train(
             )
 
         # Update epsilon
-        if epoch >= random_search:
+        if epoch >= random_search and epsilon > min_epsilon:
             epsilon = max(epsilon * epsilon_decay, min_epsilon)
 
     agent.save(f"qtable_{datetime.now().strftime(r'%Y%m%d-%H%M%S')}.pkl")
