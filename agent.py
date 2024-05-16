@@ -7,7 +7,7 @@ from collections.abc import Iterator
 from typing import Any, Optional
 
 
-class QAgent(object):
+class Agent(object):
     def __init__(self, seed: Optional[int] = None) -> None:
         random.seed(seed)
         self._table: Optional[dict[Any, dict[Any, float]]] = None
