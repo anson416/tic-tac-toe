@@ -11,10 +11,10 @@ class Agent(object):
     def __init__(self) -> None:
         self._table: Optional[dict[Any, dict[Any, float]]] = None
 
-    def __call__(self, state: Any) -> Any:
+    def __call__(self, state: Any) -> list[tuple[Any, float]]:
         if self.table is None:
             raise RuntimeError(f"`{self.__class__.__name__}.table` is not yet initialized.")
-        return max(self.table[state].items(), key=lambda x: x[1])[0]
+        return sorted(self.table[state].items(), key=lambda x: x[1], reverse=True)
 
     def init_table(self, state_space: Iterator[Any], action_space: Iterator[Any]) -> None:
         action_space = tuple(action_space)
