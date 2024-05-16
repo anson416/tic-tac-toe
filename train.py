@@ -45,9 +45,10 @@ def train(
         game.clear()
         updates = []
         player = Symbol.P1
+        step = 0
         while True:
             state = game.state
-            if epoch < random_search or random.random() < epsilon:
+            if step == 0 or epoch < random_search or random.random() < epsilon:
                 action = random.choice(game.action_space)
                 while not game(*action, player):
                     action = random.choice(game.action_space)
@@ -56,8 +57,7 @@ def train(
                 for action, _ in actions:
                     if game(*action, player):
                         break
-            future_state = game.state
-            updates.append((player.value, state, action, future_state))
+            updates.append((player.value, state, action, game.state))
 
             # Check termination
             if (winner := game.has_winner()) is not None or game.is_full():
@@ -65,6 +65,7 @@ def train(
 
             # Proceed to the next player
             player = Symbol.P2 if player == Symbol.P1 else Symbol.P1
+            step += 1
 
         # Update Q-table
         for i, update in enumerate(updates, start=1):
