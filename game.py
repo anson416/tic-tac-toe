@@ -3,6 +3,7 @@
 
 from collections.abc import Iterator
 from enum import Enum
+from functools import cached_property
 from itertools import product
 from typing import Optional
 
@@ -91,6 +92,6 @@ class TicTacToe(object):
                 board.append(tuple(row))
             yield tuple(board)
 
-    @property
-    def action_space(self) -> Iterator[tuple[int, int]]:
-        return product(range(self.size), repeat=2)
+    @cached_property
+    def action_space(self) -> tuple[tuple[int, int], ...]:
+        return tuple(product(range(self.size), repeat=2))
