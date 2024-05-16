@@ -24,13 +24,16 @@ class TicTacToe(object):
         self.clear()
 
     def __call__(self, row: int, col: int, symbol: Symbol) -> bool:
-        # Handle invalid move
-        if self.board[row][col] != Symbol.EMPTY.value or symbol == Symbol.EMPTY:
-            return False
+        try:
+            # Handle invalid move
+            if self.board[row][col] != Symbol.EMPTY.value or symbol == Symbol.EMPTY:
+                return False
 
-        # Update board with valid move
-        self._board[row][col] = symbol.value
-        return True
+            # Update board with valid move
+            self._board[row][col] = symbol.value
+            return True
+        except IndexError:
+            return False
 
     def clear(self) -> None:
         self._board = [[Symbol.EMPTY.value for _ in range(self.size)] for _ in range(self.size)]
