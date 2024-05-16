@@ -4,6 +4,8 @@
 import argparse
 import random
 from datetime import datetime
+from os import makedirs
+from os.path import join
 from typing import Optional
 
 from tqdm import tqdm
@@ -81,7 +83,9 @@ def train(
         if epoch >= random_search and epsilon > min_epsilon:
             epsilon = max(epsilon * epsilon_decay, min_epsilon)
 
-    agent.save(f"qtable_{datetime.now().strftime(r'%Y%m%d-%H%M%S')}.pkl")
+    # Save Q-table
+    makedirs("qtables", exist_ok=True)
+    agent.save(join("qtables", f"qtable_{datetime.now().strftime(r'%Y%m%d-%H%M%S')}.pkl"))
 
 
 if __name__ == "__main__":
