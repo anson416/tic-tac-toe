@@ -82,8 +82,7 @@ def train(
         if epoch >= random_search:
             epsilon = max(epsilon * epsilon_decay, min_epsilon)
 
-    now = datetime.now().strftime(r"%Y%m%d-%H%M%S")
-    agent.save(f"qtable_{now}.pkl")
+    agent.save(f"qtable_{datetime.now().strftime(r'%Y%m%d-%H%M%S')}.pkl")
 
 
 if __name__ == "__main__":
