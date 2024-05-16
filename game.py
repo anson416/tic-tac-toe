@@ -16,6 +16,10 @@ class Symbol(Enum):
 
 class TicTacToe(object):
     def __init__(self, size: int = 3) -> None:
+        # Check arguments
+        if size < 3:
+            raise ValueError(f"`size` is expected to be greater than or equal to 3, got {size}.")
+
         self._size = size
         self.clear()
 
