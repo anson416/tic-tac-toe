@@ -27,14 +27,6 @@ class TicTacToe(object):
         self._board[row][col] = symbol.value
         return True
 
-    def get_all_states(self) -> Iterator[tuple[tuple[str, ...], ...]]:
-        for state in product(Symbol, repeat=self.size**2):
-            board = []
-            for i in range(self.size):
-                row = (s.value for s in state[i * self.size : (i + 1) * self.size])
-                board.append(tuple(row))
-            yield tuple(board)
-
     def is_full(self) -> bool:
         for row in self.board:
             for symbol in row:
@@ -88,5 +80,14 @@ class TicTacToe(object):
         return tuple(tuple(row) for row in self.board)
 
     @property
-    def n_actions(self) -> int:
-        return self.size**2
+    def state_space(self) -> Iterator[tuple[tuple[str, ...], ...]]:
+        for state in product(Symbol, repeat=self.size**2):
+            board = []
+            for i in range(self.size):
+                row = (s.value for s in state[i * self.size : (i + 1) * self.size])
+                board.append(tuple(row))
+            yield tuple(board)
+
+    @property
+    def action_space(self) -> Iterator[tuple[int, int]]:
+        return product(range(self.size), repeat=2)
