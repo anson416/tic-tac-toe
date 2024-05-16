@@ -60,8 +60,6 @@ class TicTacToe(object):
         ):
             return self.board[0][self.size - 1]
 
-        return False
-
     @staticmethod
     def print_board(board: list[list[str]]) -> None:
         row = []
