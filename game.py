@@ -38,7 +38,7 @@ class TicTacToe(object):
     def is_full(self) -> bool:
         for row in self.board:
             for symbol in row:
-                if symbol != Symbol.EMPTY.value:
+                if symbol == Symbol.EMPTY.value:
                     return False
         return True
 
