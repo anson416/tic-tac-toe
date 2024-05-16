@@ -16,7 +16,7 @@ class Symbol(Enum):
 class TicTacToe(object):
     def __init__(self, size: int = 3) -> None:
         self._size = size
-        self._board = [[Symbol.EMPTY.value for _ in range(size)] for _ in range(size)]
+        self.clear()
 
     def __call__(self, row: int, col: int, symbol: Symbol) -> bool:
         # Handle invalid move
@@ -26,6 +26,9 @@ class TicTacToe(object):
         # Update board with valid move
         self._board[row][col] = symbol.value
         return True
+
+    def clear(self) -> None:
+        self._board = [[Symbol.EMPTY.value for _ in range(self.size)] for _ in range(self.size)]
 
     def is_full(self) -> bool:
         for row in self.board:
