@@ -86,3 +86,7 @@ class TicTacToe(object):
     @property
     def state(self) -> tuple[tuple[str, ...], ...]:
         return tuple(tuple(row) for row in self.board)
+
+    @property
+    def n_actions(self) -> int:
+        return self.size**2
