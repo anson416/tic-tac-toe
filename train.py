@@ -69,7 +69,7 @@ def train(
 
         # Update Q-table
         for i, update in enumerate(updates, start=1):
-            reward = 1 if winner is None else 10 if update[0] == winner else -10
+            reward = -1 if winner is None else 10 if update[0] == winner else -100
             agent.update(
                 *update[1:3],
                 reward * i,
