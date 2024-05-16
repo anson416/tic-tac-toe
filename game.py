@@ -69,7 +69,7 @@ class TicTacToe(object):
             raise ValueError(f"The size of `board` is expected to be less than or equal to 26, got {len(board)}.")
 
         padding = len(str(len(board)))
-        row = [" " * (padding + 1) + " ".join(chr(ord("A") + i) for i in range(len(board))) + "\n"]
+        row = [" " * (padding + 1) + " ".join(chr(ord("A") + i) for i in range(len(board)))]
         for i in range(len(board)):
             row.append(f"{i + 1:>{padding}} " + "|".join(board[i]))
             if i != len(board) - 1:
