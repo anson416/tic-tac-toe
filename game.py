@@ -17,8 +17,8 @@ class Symbol(Enum):
 class TicTacToe(object):
     def __init__(self, size: int = 3) -> None:
         # Check arguments
-        if size < 3:
-            raise ValueError(f"`size` is expected to be greater than or equal to 3, got {size}.")
+        if not (3 <= size <= 26):
+            raise ValueError(f"`size` is expected to be an integer between 3 and 26, got {size}.")
 
         self._size = size
         self.clear()
@@ -62,11 +62,15 @@ class TicTacToe(object):
 
     @staticmethod
     def print_board(board: list[list[str]]) -> None:
-        row = []
+        if len(board) > 26:
+            raise ValueError(f"The size of `board` is expected to be less than or equal to 26, got {len(board)}.")
+
+        padding = len(str(len(board)))
+        row = [" " * (padding + 1) + " ".join(chr(ord("A") + i) for i in range(len(board))) + "\n"]
         for i in range(len(board)):
-            row.append("|".join(board[i]))
+            row.append(f"{i + 1:>{padding}} " + "|".join(board[i]))
             if i != len(board) - 1:
-                row.append("-" * (2 * len(board) - 1))
+                row.append(" " * (padding + 1) + "-" * (2 * len(board) - 1))
         print(*row, sep="\n")
 
     @property
