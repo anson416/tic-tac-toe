@@ -8,8 +8,7 @@ from typing import Any, Optional
 
 
 class Agent(object):
-    def __init__(self, seed: Optional[int] = None) -> None:
-        random.seed(seed)
+    def __init__(self) -> None:
         self._table: Optional[dict[Any, dict[Any, float]]] = None
 
     def __call__(self, state: Any) -> Any:
