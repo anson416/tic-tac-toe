@@ -53,8 +53,7 @@ def train(
                 while not game(*action, player):
                     action = random.choice(game.action_space)
             else:
-                actions = agent(state)
-                for action, _ in actions:
+                for action, _ in agent(state):
                     if game(*action, player):
                         break
             updates.append((player.value, state, action, game.state))
