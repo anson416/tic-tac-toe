@@ -20,7 +20,7 @@ def play(
 ) -> None:
     def get_user_action(player: Symbol) -> tuple[int, int]:
         while True:
-            choice = input(f"{player.value}: ")
+            choice = input(f"{player.value} (e.g., A1): ")
             try:
                 row, col = int(choice[1:]) - 1, ord(choice[0].upper()) - ord("A")
                 assert 0 <= row <= 25 or 0 <= col <= 25
