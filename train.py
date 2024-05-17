@@ -50,7 +50,7 @@ def train(
         step = 0
         while True:
             state = game.state
-            if step == 0 or epoch < random_search or random.random() < epsilon:
+            if step == 0 or epoch < random_search or random.random() <= epsilon:
                 action = random.choice(game.action_space)
                 while not game(*action, player):
                     action = random.choice(game.action_space)
