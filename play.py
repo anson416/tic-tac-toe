@@ -3,6 +3,7 @@
 
 import argparse
 import random
+import sys
 from typing import Optional
 
 from agent import Agent
@@ -16,6 +17,18 @@ def play(
     agent_2: bool = False,
     seed: Optional[int] = None,
 ) -> None:
+    def get_user_action(player: Symbol) -> tuple[int, int]:
+        while True:
+            choice = input(f"{player.value}: ")
+            try:
+                row, col = int(choice[1:]) - 1, ord(choice[0].upper()) - ord("A")
+                assert 0 <= row <= 25 or 0 <= col <= 25
+                return row, col
+            except KeyboardInterrupt:
+                sys.exit()
+            except:
+                continue
+
     # Check arguments
     if pkl_path is None and (agent_1 or agent_2):
         raise ValueError(f"`pkl_path` cannot be None when either `agent_1` or `agent_2` is True.")
@@ -42,11 +55,9 @@ def play(
                 if game(*action, player):
                     break
         else:
-            choice = input(f"{player.value}: ")
-            action = (int(choice[1:]) - 1, ord(choice[0]) - ord("A"))
+            action = get_user_action(player)
             while not game(*action, player):
-                choice = input(f"{player.value}: ")
-                action = (int(choice[1:]) - 1, ord(choice[0]) - ord("A"))
+                action = get_user_action(player)
 
         # Show information
         print(f"{player.value} chose {chr(ord('A') + action[1])}{action[0] + 1}\n->")
