@@ -1,8 +1,8 @@
 // heatmap-controller.ts — per-layer activation grid with type-aware coloring
 // (req task 8). Adapts to whatever layer/neuron counts the network has.
 // Input cells are colored by X/O meaning, hidden cells by activation magnitude
-// (yellow), and the output row is tinted by the AI's side with softmax
-// probabilities as labels so the user sees which move the net favors.
+// (yellow), and the output row is tinted by the AI's side with the softmax
+// probability shown on hover (title) so the user sees which move the net favors.
 // update() is called after every AI move.
 import { byId } from "../by-id";
 import {
@@ -74,7 +74,6 @@ export class HeatmapController {
           const p = probs[i]!;
           color = outputCellColor(p, maxProb, this.side);
           title = `cell ${i}: Q=${v.toFixed(3)}, p=${p.toFixed(2)}`;
-          label = p.toFixed(2);
         } else {
           color = hiddenCellColor(v, layerMax);
           title = `n${i}: ${v.toFixed(2)}`;
