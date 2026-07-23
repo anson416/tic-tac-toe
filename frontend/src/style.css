@@ -432,9 +432,8 @@ input[type="range"] {
   stroke: var(--accent);
   stroke-width: 1.5;
 }
-.chart-label {
-  fill: var(--text-dim);
-  font-size: 7px;
+.chart-value {
+  font-variant-numeric: tabular-nums;
 }
 
 /* heatmap */

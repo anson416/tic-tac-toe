@@ -326,7 +326,9 @@
         <section class="panel">
           <h2 class="panel-title">Training progress</h2>
           <div class="chart-block">
-            <span class="chart-title">Loss (smoothed)</span>
+            <span class="chart-title"
+              >Loss: <span class="chart-value" id="chart-loss-value">—</span></span
+            >
             <svg
               id="chart-loss"
               class="chart"
@@ -335,7 +337,10 @@
             ></svg>
           </div>
           <div class="chart-block">
-            <span class="chart-title">Win rate vs random</span>
+            <span class="chart-title"
+              >Win rate vs. random:
+              <span class="chart-value" id="chart-winrate-value">—</span></span
+            >
             <svg
               id="chart-winrate"
               class="chart"

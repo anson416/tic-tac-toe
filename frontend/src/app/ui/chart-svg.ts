@@ -1,6 +1,6 @@
 // chart-svg.ts — hand-rolled SVG line chart, no chart library. Holds a ring
 // buffer of values and redraws a single <polyline> with an auto-scaled Y axis
-// on demand. Clutter-free: one baseline + a current-value label.
+// on demand. Clutter-free: one baseline + the polyline, no in-chart text.
 export class RingBuffer<T> {
   private data: T[] = [];
   constructor(public capacity: number) {}
@@ -22,7 +22,6 @@ export class RingBuffer<T> {
 interface ChartOpts {
   minY: number;
   maxY: number; // fixed max; pass dynamic value to rescale
-  formatValue?: (v: number) => string;
 }
 
 /** Redraw an SVG element from a numeric ring buffer. */
@@ -64,14 +63,4 @@ export function drawChart(
   line.setAttribute("fill", "none");
   line.setAttribute("class", "chart-line");
   svg.appendChild(line);
-
-  // current-value label
-  const last = vals[n - 1]!;
-  const label = document.createElementNS(ns, "text");
-  label.setAttribute("x", String(W - 2));
-  label.setAttribute("y", "10");
-  label.setAttribute("text-anchor", "end");
-  label.setAttribute("class", "chart-label");
-  label.textContent = opts.formatValue ? opts.formatValue(last) : last.toFixed(3);
-  svg.appendChild(label);
 }
