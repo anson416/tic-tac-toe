@@ -45,7 +45,7 @@ export class TrainingController {
   }
 
   private render(): void {
-    this.elToggle.textContent = this.running ? "Stop training" : "Start training";
+    this.elToggle.textContent = this.running ? "Stop" : "Start";
     this.elToggle.classList.toggle("running", this.running);
   }
 }

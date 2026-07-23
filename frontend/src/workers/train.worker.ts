@@ -127,8 +127,15 @@ function playOneSelfPlayGame(): Side | null {
     const reward = done ? terminalReward(next, side) : 0;
     // Negamax: after `side` moves it is the OPPONENT's turn, so the next
     // decision state must be encoded from the opponent's perspective.
-    const nextState = done ? state : encode(next.cells, (-side) as Side);
-    transitions.push({ state, action, reward, nextState, done, sideFlag: side });
+    const nextState = done ? state : encode(next.cells, -side as Side);
+    transitions.push({
+      state,
+      action,
+      reward,
+      nextState,
+      done,
+      sideFlag: side,
+    });
     board = next;
     if (done) result = winner(next);
   }
@@ -148,7 +155,8 @@ function trainStep(): number | null {
       const qt = target.qValues(t.nextState);
       const mask = legalMaskFromCells(t.nextState.slice(0, 9));
       let maxNext = -Infinity;
-      for (let i = 0; i < 9; i++) if (mask[i] && qt[i]! > maxNext) maxNext = qt[i]!;
+      for (let i = 0; i < 9; i++)
+        if (mask[i] && qt[i]! > maxNext) maxNext = qt[i]!;
       if (maxNext === -Infinity) maxNext = 0; // no legal moves (shouldn't happen if !done)
       // Negamax bootstrap (zero-sum, single shared net): the value to the mover
       // of reaching s' is the NEGATIVE of the opponent's best value at s'. With
@@ -164,7 +172,7 @@ function trainStep(): number | null {
   return totalLoss / batch.length;
 }
 
-/** Win rate of the greedy online net vs a random opponent over EVAL_GAMES games. */
+/** Winning rate of the greedy online net vs a random opponent over EVAL_GAMES games. */
 function evalVsRandom(): number {
   let wins = 0;
   for (let g = 0; g < EVAL_GAMES; g++) {
@@ -174,9 +182,7 @@ function evalVsRandom(): number {
     let result: Side | null = null;
     while (!isTerminal(board)) {
       const move =
-        board.turn === netSide
-          ? greedyMove(board)
-          : randomMove(board);
+        board.turn === netSide ? greedyMove(board) : randomMove(board);
       board = applyMove(board, move);
       if (isTerminal(board)) result = winner(board);
     }
@@ -191,7 +197,10 @@ function randomMove(board: BoardState): number {
 }
 
 /** Temperature-based move selection for inference (smartness slider). */
-function inferenceMove(req: InferenceReq): { move: number; activations: number[][] } {
+function inferenceMove(req: InferenceReq): {
+  move: number;
+  activations: number[][];
+} {
   const cells = req.board;
   const side = req.side as Side;
   const legal: number[] = [];
@@ -206,7 +215,11 @@ function inferenceMove(req: InferenceReq): { move: number; activations: number[]
     // greedy: argmax over legal
     move = legal[0]!;
     let bestQ = qValues[move]!;
-    for (const a of legal) if (qValues[a]! > bestQ) { bestQ = qValues[a]!; move = a; }
+    for (const a of legal)
+      if (qValues[a]! > bestQ) {
+        bestQ = qValues[a]!;
+        move = a;
+      }
   } else if (s <= 0.01) {
     // uniform random over legal
     move = legal[(Math.random() * legal.length) | 0];
@@ -222,7 +235,10 @@ function inferenceMove(req: InferenceReq): { move: number; activations: number[]
     move = legal[0]!;
     for (let i = 0; i < exps.length; i++) {
       r -= exps[i]!;
-      if (r <= 0) { move = legal[i]!; break; }
+      if (r <= 0) {
+        move = legal[i]!;
+        break;
+      }
     }
   }
   return { move, activations };
@@ -260,7 +276,8 @@ function trainingTick(): void {
       if (loss !== null) lastLoss = loss;
     }
     if (lastLoss !== null) {
-      smoothedLoss = smoothedLoss === 0 ? lastLoss : smoothedLoss * 0.95 + lastLoss * 0.05;
+      smoothedLoss =
+        smoothedLoss === 0 ? lastLoss : smoothedLoss * 0.95 + lastLoss * 0.05;
     }
     if (gamesPlayed % EVAL_EVERY === 0) {
       winRateVsRandom = evalVsRandom();
@@ -315,7 +332,10 @@ ctx.onmessage = (e: MessageEvent<WorkerReq>) => {
       ctx.postMessage(resp);
     }
   } catch (err) {
-    const errorResp: WorkerResp = { id: req.id ?? 0, error: err instanceof Error ? err.message : String(err) };
+    const errorResp: WorkerResp = {
+      id: req.id ?? 0,
+      error: err instanceof Error ? err.message : String(err),
+    };
     ctx.postMessage(errorResp);
   }
 };

@@ -1,6 +1,6 @@
 // charts-controller.ts — two hand-rolled SVG charts: smoothed TD loss and
 // rolling win-rate vs random (req 5). Redrawn on each metrics push (≤5/sec).
-// Current values are shown in the titles ("Loss: …", "Win rate vs. random: …");
+// Current values are shown in the titles ("Loss: …", "Winning rate vs. random: …");
 // the charts themselves are text-free.
 import { byId } from "../by-id";
 import { RingBuffer, drawChart } from "../ui/chart-svg";
