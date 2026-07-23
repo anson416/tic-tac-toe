@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Tic-Tac-Toe</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ===================== Board area ===================== -->
+      <main id="board-area">
+        <!-- Merged scoreboard: click a player to toggle Human/AI; the active
+             player's cell shows a blue/red border indicating whose turn it is. -->
+        <div id="scoreboard" role="group" aria-label="Score and player seats">
+          <button
+            id="seat-x"
+            class="seat"
+            data-seat="x"
+            data-choice="human"
+            type="button"
+            title="Toggle X between Human and AI"
+          >
+            <span class="seat-mark x">X</span>
+            <span class="seat-mode" data-seat="x">Human</span>
+            <span class="seat-score" id="stat-x">0</span>
+          </button>
+          <button id="seat-draw" class="seat draw" type="button" disabled>
+            <span class="seat-mark">—</span>
+            <span class="seat-mode">Draws</span>
+            <span class="seat-score" id="stat-draw">0</span>
+          </button>
+          <button
+            id="seat-o"
+            class="seat"
+            data-seat="o"
+            data-choice="human"
+            type="button"
+            title="Toggle O between Human and AI"
+          >
+            <span class="seat-mark o">O</span>
+            <span class="seat-mode" data-seat="o">Human</span>
+            <span class="seat-score" id="stat-o">0</span>
+          </button>
+        </div>
+        <!-- Smoke-test hook: the boot spec polls for .status-ready here. -->
+        <span
+          id="app-status"
+          class="status status-booting"
+          hidden
+          aria-hidden="true"
+          >booting…</span
+        >
+
+        <div id="board-wrap" class="turn-x">
+          <div id="board" role="grid" aria-label="Tic-Tac-Toe board">
+            <button
+              class="cell"
+              id="cell-0"
+              data-idx="0"
+              type="button"
+              aria-label="cell 0"
+            ></button>
+            <button
+              class="cell"
+              id="cell-1"
+              data-idx="1"
+              type="button"
+              aria-label="cell 1"
+            ></button>
+            <button
+              class="cell"
+              id="cell-2"
+              data-idx="2"
+              type="button"
+              aria-label="cell 2"
+            ></button>
+            <button
+              class="cell"
+              id="cell-3"
+              data-idx="3"
+              type="button"
+              aria-label="cell 3"
+            ></button>
+            <button
+              class="cell"
+              id="cell-4"
+              data-idx="4"
+              type="button"
+              aria-label="cell 4"
+            ></button>
+            <button
+              class="cell"
+              id="cell-5"
+              data-idx="5"
+              type="button"
+              aria-label="cell 5"
+            ></button>
+            <button
+              class="cell"
+              id="cell-6"
+              data-idx="6"
+              type="button"
+              aria-label="cell 6"
+            ></button>
+            <button
+              class="cell"
+              id="cell-7"
+              data-idx="7"
+              type="button"
+              aria-label="cell 7"
+            ></button>
+            <button
+              class="cell"
+              id="cell-8"
+              data-idx="8"
+              type="button"
+              aria-label="cell 8"
+            ></button>
+          </div>
+          <!-- SVG overlay: winning line + result text -->
+          <svg
+            id="overlay"
+            viewBox="0 0 300 300"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <line id="win-line" x1="0" y1="0" x2="0" y2="0" />
+          </svg>
+          <div id="result-overlay" hidden></div>
+        </div>
+
+        <div id="board-controls">
+          <button id="btn-new-game" class="btn primary" type="button">
+            New game
+          </button>
+          <button id="btn-reset-stats" class="btn" type="button">
+            Reset score
+          </button>
+        </div>
+      </main>
+
+      <!-- ===================== Sidebar ===================== -->
+      <aside id="sidebar">
+        <header id="sidebar-header">
+          <span class="brand">RL Tic-Tac-Toe</span>
+          <button
+            id="btn-theme"
+            class="icon-btn"
+            type="button"
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            🌓
+          </button>
+        </header>
+
+        <!-- Model config (req 4) -->
+        <section class="panel">
+          <h2 class="panel-title">Model</h2>
+          <label class="field">
+            <span
+              class="field-label"
+              title="How many processing layers sit between the input and the output. More layers can capture more complex patterns but train slower."
+              >Hidden layers</span
+            >
+            <input
+              id="cfg-hidden-layers"
+              class="num"
+              type="number"
+              min="0"
+              max="6"
+              step="1"
+              value="2"
+              title="How many processing layers sit between the input and the output. More layers can capture more complex patterns but train slower."
+            />
+          </label>
+          <div class="field">
+            <span
+              class="field-label"
+              title="How many neurons in this layer. More neurons = more capacity to learn, but slower training."
+              >Neurons per layer</span
+            >
+            <div
+              id="cfg-neurons-list"
+              style="display: flex; gap: 6px; flex-wrap: wrap"
+            ></div>
+          </div>
+          <label class="field">
+            <span class="field-label"
+              >Learning rate <output id="lr-out">0.001</output></span
+            >
+            <input
+              id="cfg-learning-rate"
+              type="range"
+              min="0.0001"
+              max="0.05"
+              step="0.0001"
+              value="0.001"
+              title="How big a step the network takes each time it corrects a mistake. Too high is unstable, too low is slow."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label"
+              >Discount γ <output id="disc-out">0.95</output></span
+            >
+            <input
+              id="cfg-discount"
+              type="range"
+              min="0.5"
+              max="0.999"
+              step="0.001"
+              value="0.95"
+              title="How much the AI values future rewards versus immediate ones. Higher = more far-sighted play."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Batch size</span>
+            <input
+              id="cfg-batch-size"
+              class="num"
+              type="number"
+              min="8"
+              max="512"
+              step="1"
+              value="64"
+              title="How many remembered game situations the network studies together in one training step."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Buffer size</span>
+            <input
+              id="cfg-buffer-size"
+              class="num"
+              type="number"
+              min="1000"
+              max="200000"
+              step="1000"
+              value="20000"
+              title="How many past game situations are kept in memory to train from."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Target sync (steps)</span>
+            <input
+              id="cfg-target-sync"
+              class="num"
+              type="number"
+              min="50"
+              max="5000"
+              step="10"
+              value="500"
+              title="How often the stable 'target' copy of the network is refreshed. Larger = steadier but slower learning."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label"
+              >Min ε <output id="emin-out">0.05</output></span
+            >
+            <input
+              id="cfg-epsilon-min"
+              type="range"
+              min="0"
+              max="0.5"
+              step="0.01"
+              value="0.05"
+              title="The minimum chance the AI makes a random move during training, so it keeps exploring new ideas."
+            />
+          </label>
+          <label class="field">
+            <span class="field-label"
+              >ε decay <output id="edec-out">0.9995</output></span
+            >
+            <input
+              id="cfg-epsilon-decay"
+              type="range"
+              min="0.9"
+              max="0.99999"
+              step="0.00001"
+              value="0.9995"
+              title="How quickly the AI stops making random exploratory moves as training goes on."
+            />
+          </label>
+          <button
+            id="btn-apply-config"
+            class="btn full"
+            type="button"
+            title="Rebuild the network with these settings. This resets the current model and training."
+          >
+            Apply (rebuild model)
+          </button>
+        </section>
+
+        <!-- Training (reqs 1, 7) -->
+        <section class="panel">
+          <h2 class="panel-title">Training</h2>
+          <button
+            id="btn-train-toggle"
+            class="btn primary full"
+            type="button"
+            title="Start or stop self-play training — the AI repeatedly plays itself to learn."
+          >
+            Start training
+          </button>
+          <div class="metric-row" title="Number of self-play games completed.">
+            <span class="metric-label">Games</span>
+            <span id="games-played" class="metric-value">0</span>
+          </div>
+          <div
+            class="metric-row"
+            title="Number of gradient (learning) updates performed."
+          >
+            <span class="metric-label">Steps</span>
+            <span id="steps-count" class="metric-value">0</span>
+          </div>
+          <div
+            class="metric-row"
+            title="Current exploration rate — the chance of a random move during training."
+          >
+            <span class="metric-label">ε</span>
+            <span id="epsilon-value" class="metric-value">1.000</span>
+          </div>
+        </section>
+
+        <!-- Charts (req 5) -->
+        <section class="panel">
+          <h2 class="panel-title">Training progress</h2>
+          <div class="chart-block">
+            <span class="chart-title">Loss (smoothed)</span>
+            <svg
+              id="chart-loss"
+              class="chart"
+              viewBox="0 0 200 60"
+              preserveAspectRatio="none"
+            ></svg>
+          </div>
+          <div class="chart-block">
+            <span class="chart-title">Win rate vs random</span>
+            <svg
+              id="chart-winrate"
+              class="chart"
+              viewBox="0 0 200 60"
+              preserveAspectRatio="none"
+            ></svg>
+          </div>
+        </section>
+
+        <!-- Smartness (req 10) -->
+        <section class="panel">
+          <h2 class="panel-title">Smartness (inference)</h2>
+          <label class="field">
+            <span class="field-label"
+              >Smartness <output id="smartness-value">100%</output></span
+            >
+            <input
+              id="smartness-slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="100"
+            />
+          </label>
+          <p class="hint">
+            100% = greedy (best move). 0% = uniform random. Like LLM
+            temperature.
+          </p>
+        </section>
+
+        <!-- Heatmap (req 6) -->
+        <section class="panel">
+          <h2 class="panel-title">Network activations</h2>
+          <div id="heatmap" class="heatmap">
+            <span class="hint"
+              >Play a move as/against the AI to see neuron activations.</span
+            >
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
