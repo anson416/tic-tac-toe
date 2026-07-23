@@ -1,6 +1,8 @@
-# Tic-Tac-Toe
+<h1 align="center">Tic Tac Toe with Reinforcement Learning</h1>
 
-A simple P2P game that can be played in CLI. Leveraging Q-learning, you can also train an AI agent to play with you. No special hardware is required.
+<p align="center">
+  <a href="https://anson416.github.io/tic-tac-toe/"><strong>Project Page</strong></a>
+</p>
 
 ## Installation
 
@@ -41,7 +43,7 @@ You can find the created Q-tables under "qtables/".
 python test.py pkl_path \
                [-s SIZE] \
                [-e EPOCHS] \
-               [--seed SEED] 
+               [--seed SEED]
 
 positional arguments:
   pkl_path
