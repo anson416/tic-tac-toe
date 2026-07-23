@@ -13,6 +13,7 @@
   --o-color: #4fe372;
   --hidden-color: #e3b341;
   --good: #3fb950;
+  --stop: #8957e5;
   --radius: 10px;
   --font:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
@@ -30,6 +31,7 @@
   --o-color: #1cba41;
   --hidden-color: #bf8700;
   --good: #1a7f37;
+  --stop: #6e40c9;
 }
 
 * {
@@ -275,8 +277,8 @@ body {
   width: 100%;
 }
 .btn.running {
-  background: var(--o-color);
-  border-color: var(--o-color);
+  background: var(--stop);
+  border-color: var(--stop);
   color: #fff;
 }
 
